@@ -8,8 +8,22 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock HorizontalAlignment="Left" Margin="100,100,0,0" Text="Search:" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Margin="149,93,0,0" Text="" VerticalAlignment="Top" Width="200" />
+        <TextBlock Text="{x:Bind ViewModel.DefaultCashing.Currency}" Margin="150,150,200,200" />
+        <ListView ItemsSource="{x:Bind ViewModel.ManyCash}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:Cash">
+                    <StackPanel Orientation="Horizontal" Margin="6">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,12,0"/>
+                        <StackPanel>
+                            <TextBlock Text="{x:Bind Currency}"/>
+                            <TextBlock Text="{x:Bind Country}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

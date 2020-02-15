@@ -25,6 +25,9 @@ namespace ExchangeRates
         public MainPage()
         {
             this.InitializeComponent();
+            this.ViewModel = new CashViewModel();
         }
+
+        public CashViewModel ViewModel { get; set; }
     }
 }
