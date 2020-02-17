@@ -22,10 +22,19 @@ namespace ExchangeRates
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public IList<Cash> JsonToShow;
+
         public MainPage()
         {
             this.InitializeComponent();
             this.ViewModel = new CashViewModel();
+            Initialize();
+        }
+
+        public async void Initialize()
+        {
+            this.JsonToShow = await ApiRequestor.GetAllCashAsync();
+            this.ViewModel.AddCurrencies(JsonToShow);
         }
 
         public CashViewModel ViewModel { get; set; }

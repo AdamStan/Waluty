@@ -14,38 +14,39 @@ namespace ExchangeRates
     {
         /** Name */
         public string Currency { get; set; }
-        public string Country { get; set; }
+        public string Code { get; set; }
         public DateTime EffectiveDate { get; set; }
-        /** przeliczony kurs kupna waluty */
-        public long Bid { get; set; }
-        /** przeliczony kurs sprzedaży waluty */
-        public long Ask { get; set; }
         /** przeliczony kurs średni waluty */
-        public long Mid { get; set; }
+        public double Mid { get; set; }
         public Cash()
         {
             this.Currency = "Złoty";
-            this.Country = "Poland";
+            this.Code = "ZLN";
         }
-        public string Summary
+        public string DateWithoutHour
         {
             get
             {
-                return $"{this.Currency} by {this.Country}, released: ";
+                return $"{EffectiveDate.Day}/{EffectiveDate.Month}/{EffectiveDate.Year}";
             }
         }
     }
+
     public class CashViewModel
     {
-        private readonly Cash defaultCash = new Cash();
-        public Cash DefaultCashing { get { return this.defaultCash;  } }
         private ObservableCollection<Cash> manyCash = new ObservableCollection<Cash>();
         public ObservableCollection<Cash> ManyCash { get { return this.manyCash; } }
+
+        internal void AddCurrencies(IList<Cash> currencies)
+        {
+            foreach(Cash currency in currencies)
+            {
+                manyCash.Add(currency);
+            }
+        }
+
         public CashViewModel()
         {
-            this.manyCash.Add(new Cash() { Country = "European Union", Currency = "EUR" });
-            this.manyCash.Add(new Cash() { Country = "Denmark", Currency = "DKK" });
-            this.manyCash.Add(new Cash() { Country = "Croatia", Currency = "HRK" });
         }
     }
 }
