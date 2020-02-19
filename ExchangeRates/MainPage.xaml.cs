@@ -42,9 +42,13 @@ namespace ExchangeRates
 
         public CashViewModel ViewModel { get; set; }
 
+        // https://docs.microsoft.com/en-us/windows/uwp/design/basics/navigate-between-two-pages
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            object clickedItem = e.ClickedItem;
+            Cash cash = (Cash) clickedItem;
             System.Diagnostics.Debug.WriteLine(sender);
+            this.Frame.Navigate(typeof(DetailsView), cash) ;
         }
     }
 }

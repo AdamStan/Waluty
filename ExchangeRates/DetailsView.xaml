@@ -9,12 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="50,50,0,0" Text="Name: " TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="50,75,0,0" Text="Country: " TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="250,100,0,0" Text="From: " TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <CalendarDatePicker HorizontalAlignment="Left" Margin="290,93,0,0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="417,100,0,0" Text="To:" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <CalendarDatePicker HorizontalAlignment="Left" Margin="439,93,0,0" VerticalAlignment="Top"/>
-
+        <TextBlock HorizontalAlignment="Center" Margin="0,50,0,0" Text="{x:Bind Currency}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,75,0,0" Text="{x:Bind Code}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="60,79,0,0" Text="From: " TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <CalendarDatePicker HorizontalAlignment="Left" Margin="100,75,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="227,79,0,0" Text="To:" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <CalendarDatePicker HorizontalAlignment="Left" Margin="249,75,0,0" VerticalAlignment="Top"/>
+        <Button Content="Back to main page" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="50,0,0,50"/>
     </Grid>
 </Page>
