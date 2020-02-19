@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,21 +23,28 @@ namespace ExchangeRates
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public IList<Cash> JsonToShow;
+        public DateTime Date;
 
         public MainPage()
         {
             this.InitializeComponent();
             this.ViewModel = new CashViewModel();
+            this.Date = DateTime.Now;
             Initialize();
         }
-
-        public async void Initialize()
+        
+        public void Initialize()
         {
-            this.JsonToShow = await ApiRequestor.GetAllCashAsync();
-            this.ViewModel.AddCurrencies(JsonToShow);
+            Task<IList<Cash>> currencies = ApiRequestor.GetAllCashAsync();
+            currencies.Wait();
+            this.ViewModel.AddCurrencies(currencies.Result);
         }
 
         public CashViewModel ViewModel { get; set; }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(sender);
+        }
     }
 }

@@ -9,18 +9,28 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock HorizontalAlignment="Left" Margin="36,36,0,0" Text="Search:" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="85,29,0,0" Text="" VerticalAlignment="Top" Width="300" />
-        <ListView ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,100,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock HorizontalAlignment="Center" Margin="0,25,0,0" Text="Kursy Walut, Adam zrobił" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top"/>
+        <ListView ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                  ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
+            <ListView.ItemsPanel >
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:Cash">
-                    <StackPanel Orientation="Horizontal" Margin="6">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,12,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="5" Opacity="0.98">
+                        <Image Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0">
+                            <Image.Source>
+                                <SvgImageSource UriSource="{Binding Path=PathToImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RasterizePixelHeight="1000" RasterizePixelWidth="1000"/>
+                            </Image.Source>
+                        </Image>
                         <StackPanel>
                             <TextBlock Text="{x:Bind Currency}"/>
                             <TextBlock Text="{x:Bind Code}"/>
-                            <TextBlock Text="{x:Bind Mid}"/>
-                            <TextBlock Text="{x:Bind DateWithoutHour}"/>
+                            <TextBlock Text="{x:Bind MidWithDescription}"/>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>
