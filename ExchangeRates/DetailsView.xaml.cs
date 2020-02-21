@@ -43,5 +43,10 @@ namespace ExchangeRates
             }
             base.OnNavigatedTo(e);
         }
+
+        private void BackToMainPage(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(MainPage));
+        }
     }
 }

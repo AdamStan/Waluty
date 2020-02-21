@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.UI.Popups;
+using System.Diagnostics;
 
 namespace ExchangeRates
 {
@@ -14,13 +16,10 @@ namespace ExchangeRates
     {
         static HttpClient client = new HttpClient();
         private readonly static string BaseUrl = "http://api.nbp.pl/api/exchangerates/tables/";
-        private readonly static string AllLastCurrenciesA = "A/";
-        private readonly static string AllLastCurrenciesB = "B/";
         private readonly static string BaseUrlToGetFlag = "https://restcountries.eu/rest/v2/currency/";
         // flag
         private readonly static string BaseFlagAddress = "https://www.countryflags.io/";
         private readonly static string RestFlagAddress = "/flat/24.png";
-
 
         public static async Task<string> GetJsonAsync(string path)
         {
@@ -32,23 +31,35 @@ namespace ExchangeRates
             }
             return content;
         }
-        
-        public static async Task<IList<Cash>> GetAllCashAsync()
+
+        /// <summary>
+        /// Get currencies from NBP API
+        /// </summary>
+        /// <param name="table"> name of table to request (from api) </param>
+        /// <param name="date"> if null then we take current exchange rates </param> 
+        /// <returns></returns>
+        public static async Task<IList<Cash>> GetAllCashAsync(string table, string date = "")
         {
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             List<Cash> currencies = new List<Cash>();
             
-            string contentA = await GetJsonAsync(BaseUrl + AllLastCurrenciesA);
-            string contentB =  await GetJsonAsync(BaseUrl + AllLastCurrenciesB);
-            currencies.AddRange(JsonParserForCurrencies.GetCashFromJson(contentA));
-            currencies.AddRange(JsonParserForCurrencies.GetCashFromJson(contentB));
+            string content = await GetJsonAsync(BaseUrl + table + "/" + date + "/");
+            if (content.Equals("404 NotFound - Not Found - Brak danych"))
+            {
+                Debug.WriteLine("BRAK DANYCH");
+                // var dialog = new MessageDialog("Cannot find data for table: " + table + ". For this table we request for last properly data");
+                // content = await GetJsonAsync(BaseUrl + table + "/");
+                // dialog.Title = "Error";
+                // await dialog.ShowAsync();
+                return currencies;
+            }
+
+            currencies.AddRange(JsonParserForCurrencies.GetCashFromJson(content));
 
             currencies.ForEach(async cur => {
                 try
                 {
                     string pathToImage = await GetFlag(cur);
                     cur.PathToImage = pathToImage;
-                    System.Diagnostics.Debug.WriteLine(pathToImage);
                 } catch(Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine(ex.Message);
@@ -60,9 +71,7 @@ namespace ExchangeRates
 
         public static async Task<string> GetFlag(Cash cash)
         {
-            System.Diagnostics.Debug.WriteLine(cash.Code);
             string jsonWithImage = await GetJsonAsync(BaseUrlToGetFlag + cash.Code);
-            System.Diagnostics.Debug.WriteLine(jsonWithImage);
             return BaseFlagAddress + JsonParserForCurrencies.GetAlpha2CodeUrlFromJson(jsonWithImage) + RestFlagAddress;
         }
 

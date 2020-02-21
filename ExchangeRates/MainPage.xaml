@@ -10,7 +10,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock HorizontalAlignment="Center" Margin="0,25,0,0" Text="Kursy Walut, Adam zrobił" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
-        <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top"/>
+        <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" DateChanged="DatePicker_DateChanged"/>
         <ListView ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                   ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                   ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="ListView_ItemClick">

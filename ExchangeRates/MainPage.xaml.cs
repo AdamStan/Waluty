@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Diagnostics;
 
 //Szablon elementu Pusta strona jest udokumentowany na stronie https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x415
 
@@ -33,10 +34,22 @@ namespace ExchangeRates
             Initialize();
         }
         
-        public async void Initialize()
+        public async void InitializeTable(string tableName, string date = "")
         {
-            IList<Cash> currencies = await ApiRequestor.GetAllCashAsync();
-            this.ViewModel.AddCurrencies(currencies);
+            try
+            {
+                IList<Cash> currencies = await ApiRequestor.GetAllCashAsync(tableName, date);
+                this.ViewModel.AddCurrencies(currencies);
+            } catch(Exception)
+            {
+                Debug.WriteLine("Cannot get data for: " + tableName);
+            }
+        }
+
+        internal void Initialize(string date = "")
+        {
+            InitializeTable("A", date);
+            InitializeTable("B", date);
         }
 
         public CashViewModel ViewModel { get; set; }
@@ -46,8 +59,26 @@ namespace ExchangeRates
         {
             object clickedItem = e.ClickedItem;
             Cash cash = (Cash) clickedItem;
-            System.Diagnostics.Debug.WriteLine(sender);
+            Debug.WriteLine(sender);
             this.Frame.Navigate(typeof(DetailsView), cash) ;
+        }
+
+        private void DatePicker_DateChanged(object sender, DatePickerValueChangedEventArgs e)
+        {
+            DateTimeOffset toGet = e.NewDate;
+            string month = "";
+            if(toGet.Month < 10)
+            {
+                month = "0" + toGet.Month;
+            }
+            else
+            {
+                month = "" + toGet.Month;
+            }
+            string dateToGet = toGet.Year + "-" + month + "-" + toGet.Day + "/";
+            ViewModel.RemoveAllCurrencies();
+            Initialize(dateToGet);
+            Debug.WriteLine(dateToGet);
         }
     }
 }
