@@ -33,11 +33,10 @@ namespace ExchangeRates
             Initialize();
         }
         
-        public void Initialize()
+        public async void Initialize()
         {
-            Task<IList<Cash>> currencies = ApiRequestor.GetAllCashAsync();
-            currencies.Wait();
-            this.ViewModel.AddCurrencies(currencies.Result);
+            IList<Cash> currencies = await ApiRequestor.GetAllCashAsync();
+            this.ViewModel.AddCurrencies(currencies);
         }
 
         public CashViewModel ViewModel { get; set; }

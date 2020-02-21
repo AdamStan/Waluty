@@ -24,7 +24,7 @@
                     <StackPanel Orientation="Horizontal" Margin="5" Opacity="0.98">
                         <Image Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0">
                             <Image.Source>
-                                <SvgImageSource UriSource="{Binding Path=PathToImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RasterizePixelHeight="1000" RasterizePixelWidth="1000"/>
+                                <BitmapImage UriSource="{Binding Path=PathToImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Image.Source>
                         </Image>
                         <StackPanel>
