@@ -24,12 +24,19 @@ namespace ExchangeRates
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public string NoExchangeRateMessage
+        {
+            get
+            {
+                return "For this day is no exchange rates to show";
+            }
+        }
         public DateTime Date;
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.ViewModel = new CashViewModel();
+            this.ViewModel = new CashViewModel(this);
             this.Date = DateTime.Now;
             Initialize();
         }
@@ -54,7 +61,6 @@ namespace ExchangeRates
 
         public CashViewModel ViewModel { get; set; }
 
-        // https://docs.microsoft.com/en-us/windows/uwp/design/basics/navigate-between-two-pages
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             object clickedItem = e.ClickedItem;
@@ -79,6 +85,22 @@ namespace ExchangeRates
             ViewModel.RemoveAllCurrencies();
             Initialize(dateToGet);
             Debug.WriteLine(dateToGet);
+            ListViewUpdated();
+        }
+
+        public void ListViewUpdated()
+        {
+            Debug.WriteLine(CurrenciesListView.Items.Count);
+            if (CurrenciesListView.Items.Count == 0)
+            {
+                NoItemsTextBox.Visibility = Visibility.Visible;
+                CurrenciesListView.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                NoItemsTextBox.Visibility = Visibility.Collapsed;
+                CurrenciesListView.Visibility = Visibility.Visible;
+            }
         }
     }
 }

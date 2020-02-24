@@ -75,11 +75,13 @@ namespace ExchangeRates
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         private ObservableCollection<Cash> manyCash = new ObservableCollection<Cash>();
+        private MainPage mainPage;
 
         public ObservableCollection<Cash> ManyCash { get { return this.manyCash; } }
 
-        public CashViewModel()
+        public CashViewModel(MainPage mainPage)
         {
+            this.mainPage = mainPage;
         }
 
         internal void AddCurrencies(IList<Cash> currencies)
@@ -88,6 +90,7 @@ namespace ExchangeRates
             {
                 manyCash.Add(currency);
             }
+            mainPage.ListViewUpdated();
         }
 
         internal void RemoveAllCurrencies()
