@@ -9,9 +9,9 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Arial">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock HorizontalAlignment="Center" Margin="0,25,0,0" Text="Kursy Walut, Adam zrobił" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
-        <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" DateChanged="DatePicker_DateChanged"/>
-        <ListView x:Name="CurrenciesListView" ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <TextBlock HorizontalAlignment="Center" Margin="0,52,0,0" Text="Kursy Walut, Adam zrobił" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" DateChanged="DatePicker_DateChanged"/>
+        <ListView x:Name="CurrenciesListView" ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                   ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                   ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
             <ListView.ItemsPanel >
@@ -42,5 +42,11 @@
             HorizontalAlignment="Center"  
             Text="{x:Bind NoExchangeRateMessage}"
             Visibility="Collapsed" FontWeight="Normal" FontFamily="Arial" FontSize="24"/>
+        <CommandBar>
+            <CommandBar.Content>
+                <Grid/>
+            </CommandBar.Content>
+            <AppBarButton Icon="Cancel" Label="Close" Click="CloseApplication"/>
+        </CommandBar>
     </Grid>
 </Page>

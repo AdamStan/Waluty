@@ -48,5 +48,10 @@ namespace ExchangeRates
         {
             this.Frame.Navigate(typeof(MainPage));
         }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Exit();
+        }
     }
 }

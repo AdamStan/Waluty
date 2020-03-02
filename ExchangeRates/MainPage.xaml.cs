@@ -40,14 +40,15 @@ namespace ExchangeRates
             this.Date = DateTime.Now;
             Initialize();
         }
-        
+
         public async void InitializeTable(string tableName, string date = "")
         {
             try
             {
                 IList<Cash> currencies = await ApiRequestor.GetAllCashAsync(tableName, date);
                 this.ViewModel.AddCurrencies(currencies);
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 Debug.WriteLine("Cannot get data for: " + tableName);
             }
@@ -64,16 +65,16 @@ namespace ExchangeRates
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             object clickedItem = e.ClickedItem;
-            Cash cash = (Cash) clickedItem;
+            Cash cash = (Cash)clickedItem;
             Debug.WriteLine(sender);
-            this.Frame.Navigate(typeof(DetailsView), cash) ;
+            this.Frame.Navigate(typeof(DetailsView), cash);
         }
 
         private void DatePicker_DateChanged(object sender, DatePickerValueChangedEventArgs e)
         {
             DateTimeOffset toGet = e.NewDate;
             string month = "";
-            if(toGet.Month < 10)
+            if (toGet.Month < 10)
             {
                 month = "0" + toGet.Month;
             }
@@ -101,6 +102,11 @@ namespace ExchangeRates
                 NoItemsTextBox.Visibility = Visibility.Collapsed;
                 CurrenciesListView.Visibility = Visibility.Visible;
             }
+        }
+
+        private void CloseApplication(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Exit();
         }
     }
 }
