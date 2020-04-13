@@ -59,7 +59,7 @@ namespace ExchangeRates
             Application.Current.Exit();
         }
 
-        private void CalendarDatePicker_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
+        private async void CalendarDatePicker_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
         {
             DateFrom = DateFromPicker.Date.GetValueOrDefault();
             DateUntil = DateUntilPicker.Date.GetValueOrDefault();
@@ -67,7 +67,7 @@ namespace ExchangeRates
             {
                 string fromToRequest = DateHelper.getDateCorrectForApi(DateFrom);
                 string untilToRequest = DateHelper.getDateCorrectForApi(DateUntil);
-                ChangeChart(fromToRequest, untilToRequest);
+                await ChangeChart(fromToRequest, untilToRequest);
             }
         }
 
@@ -75,6 +75,7 @@ namespace ExchangeRates
         {
             IList<Rate> dataToChart = await ApiRequestor.GetCurrencyFromTo(cash, fromToRequest, untilToRequest);
             ((LineSeries)LineChart.Series[0]).ItemsSource  = dataToChart;
+            ExportButton.IsEnabled = true;
         }
 
         private bool DatesAreCorrect()
@@ -87,7 +88,40 @@ namespace ExchangeRates
             {
                 return false;
             }
+            if(DateUntil > DateTime.Now)
+            {
+                return false;
+            }
             return true;
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.Write("Not implemented! Cannot find easy method to export in jpeg file");
+            /*
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                IList<Rate> dataToChart = (IList<Rate>)((LineSeries)LineChart.Series[0]).ItemsSource;
+                
+                IList<string> dataToFile = new List<string>();
+                foreach (Rate rate in dataToChart)
+                {
+                    dataToFile.Add(rate.ToString());
+                }
+
+                Debug.WriteLine(file.Path);
+                File.WriteAllLines(file.Path, dataToFile.ToArray());
+            }
+            else
+            {
+                Debug.WriteLine("Operation canceled");
+            }
+            */
         }
     }
 }

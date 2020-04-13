@@ -33,5 +33,7 @@
                 </Charting:LineSeries.LegendItemStyle>
             </Charting:LineSeries>
         </Charting:Chart>
+        <Button Name="ExportButton" Content="Export to JPEG" IsEnabled="False" HorizontalAlignment="Right" 
+                Margin="0,75,50,0" VerticalAlignment="Top" Click="ExportButton_Click"/>
     </Grid>
 </Page>
