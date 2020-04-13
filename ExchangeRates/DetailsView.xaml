@@ -5,6 +5,7 @@
     xmlns:local="using:ExchangeRates"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -12,9 +13,9 @@
         <TextBlock HorizontalAlignment="Center" Margin="0,50,0,0" Text="{x:Bind Currency}" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Center" Margin="0,75,0,0" Text="{x:Bind Code}" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="60,79,0,0" Text="From: " TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <CalendarDatePicker HorizontalAlignment="Left" Margin="100,75,0,0" VerticalAlignment="Top"/>
+        <CalendarDatePicker x:Name="DateFromPicker" HorizontalAlignment="Left" Margin="100,75,0,0" VerticalAlignment="Top" DateChanged="CalendarDatePicker_DateChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="227,79,0,0" Text="To:" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <CalendarDatePicker HorizontalAlignment="Left" Margin="249,75,0,0" VerticalAlignment="Top"/>
+        <CalendarDatePicker x:Name="DateUntilPicker" HorizontalAlignment="Left" Margin="249,75,0,0" VerticalAlignment="Top" DateChanged="CalendarDatePicker_DateChanged"/>
         <CommandBar>
             <CommandBar.Content>
                 <Grid/>
@@ -22,5 +23,8 @@
             <AppBarButton Icon="Back" Label="Return to main" Click="BackToMainPage"/>
             <AppBarButton Icon="Cancel" Label="Close" Click="AppBarButton_Click"/>
         </CommandBar>
+        <Charting:Chart x:Name="LineChart" Grid.Row="1" Grid.Column="2" Margin="120,120,120,120">
+            <Charting:LineSeries Title="Title" IndependentValuePath="Date" DependentValuePath="Mid" IsSelectionEnabled="True"/>
+        </Charting:Chart>
     </Grid>
 </Page>

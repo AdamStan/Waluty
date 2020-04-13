@@ -22,6 +22,7 @@ namespace ExchangeRates
         public DateTime EffectiveDate { get; set; }
         /** przeliczony kurs średni waluty */
         public double Mid { get; set; }
+        public string TableName { get; set; }
 
         private string pathToImage;
         public string PathToImage

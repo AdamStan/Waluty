@@ -17,6 +17,11 @@ namespace ExchangeRates
         static HttpClient client = new HttpClient();
         private readonly static string BaseUrl = "http://api.nbp.pl/api/exchangerates/tables/";
         private readonly static string BaseUrlToGetFlag = "https://restcountries.eu/rest/v2/currency/";
+        // one currency: 
+        // http://api.nbp.pl/api/exchangerates/rates/{table}/{code}/{startDate}/{endDate}/
+        // example: http://api.nbp.pl/api/exchangerates/rates/A/USD/2019-01-01/2019-01-30/
+        private readonly static string BaseUrlOneCurrency = "http://api.nbp.pl/api/exchangerates/rates/";
+
         // flag
         private readonly static string BaseFlagAddress = "https://www.countryflags.io/";
         private readonly static string RestFlagAddress = "/flat/24.png";
@@ -45,11 +50,7 @@ namespace ExchangeRates
             string content = await GetJsonAsync(BaseUrl + table + "/" + date + "/");
             if (content.Equals("404 NotFound - Not Found - Brak danych"))
             {
-                Debug.WriteLine("BRAK DANYCH");
-                // var dialog = new MessageDialog("Cannot find data for table: " + table + ". For this table we request for last properly data");
-                // content = await GetJsonAsync(BaseUrl + table + "/");
-                // dialog.Title = "Error";
-                // await dialog.ShowAsync();
+                Debug.WriteLine("Data not found!");
                 return currencies;
             }
 
@@ -59,6 +60,7 @@ namespace ExchangeRates
                 try
                 {
                     string pathToImage = await GetFlag(cur);
+                    cur.TableName = table;
                     cur.PathToImage = pathToImage;
                 } catch(Exception ex)
                 {
@@ -67,6 +69,17 @@ namespace ExchangeRates
             });
 
             return currencies;
+        }
+
+        internal static async Task<IList<Rate>> GetCurrencyFromTo(Cash cash, string fromToRequest, string untilToRequest)
+        {
+            string table = cash.TableName;
+            string code = cash.Code;
+            string urlAddress = BaseUrlOneCurrency + table + "/" + code + "/" + fromToRequest + "/" + untilToRequest + "/";
+            Debug.WriteLine("Url address: " + urlAddress);
+            string jsonWithData = await GetJsonAsync(urlAddress);
+            Debug.WriteLine("Rates in json: " + jsonWithData);
+            return JsonParserForCurrencies.GetPriceFromJson(jsonWithData);
         }
 
         public static async Task<string> GetFlag(Cash cash)
@@ -82,8 +95,8 @@ namespace ExchangeRates
         public static IList<Cash> GetCashFromJson(string json)
         {
             IList<Cash> currencies = new List<Cash>();
-            var jsonContentA = JsonArray.Parse(json);
-            foreach (var table in jsonContentA)
+            var jsonContent = JsonArray.Parse(json);
+            foreach (var table in jsonContent)
             {
                 var jsonObject = table.GetObject();
                 var date = jsonObject.GetNamedString("effectiveDate");
@@ -94,7 +107,7 @@ namespace ExchangeRates
                         Currency = currencyObject.GetNamedString("currency"),
                         Code = currencyObject.GetNamedString("code"),
                         Mid = currencyObject.GetNamedNumber("mid"),
-                        EffectiveDate = Convert.ToDateTime(date)
+                        EffectiveDate = Convert.ToDateTime(date),
                     });
                 }
             }
@@ -114,6 +127,22 @@ namespace ExchangeRates
                 }
             }
             return imageUrl;
+        }
+
+        public static IList<Rate> GetPriceFromJson(string json)
+        {
+            IList<Rate> rates = new List<Rate>();
+            var jsonObject = JsonObject.Parse(json);
+            var jsonArray = jsonObject.GetNamedArray("rates");
+            foreach (var jsonRate in jsonArray)
+            {
+                var rate = jsonRate.GetObject();
+                string effectiveDate = rate.GetNamedString("effectiveDate");
+                double mid = rate.GetNamedNumber("mid");
+                Rate newRate = new Rate(effectiveDate, mid);
+                rates.Add(newRate);
+            }
+            return rates;
         }
     }
 }
