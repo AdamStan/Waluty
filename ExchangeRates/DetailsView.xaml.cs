@@ -61,49 +61,19 @@ namespace ExchangeRates
 
         private void CalendarDatePicker_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
         {
-            Debug.WriteLine("DateChanged!!!");
             DateFrom = DateFromPicker.Date.GetValueOrDefault();
             DateUntil = DateUntilPicker.Date.GetValueOrDefault();
             if (DatesAreCorrect())
             {
-                Debug.WriteLine("Correct dates");
-                string fromToRequest = getDateCorrectForApi(DateFrom);
-                string untilToRequest = getDateCorrectForApi(DateUntil);
+                string fromToRequest = DateHelper.getDateCorrectForApi(DateFrom);
+                string untilToRequest = DateHelper.getDateCorrectForApi(DateUntil);
                 ChangeChart(fromToRequest, untilToRequest);
             }
-        }
-
-        private string getDateCorrectForApi(DateTimeOffset datetime)
-        {
-            string date = "";
-            date += datetime.Year + "-";
-            if(datetime.Month < 10)
-            {
-                date += "0" + datetime.Month;
-            }
-            else
-            {
-                date += datetime.Month;
-            }
-            date += "-";
-            if (datetime.Day < 10)
-            {
-                date += "0" + datetime.Day;
-            }
-            else
-            {
-                date += datetime.Day;
-            }
-            return date;
         }
 
         private async Task ChangeChart(string fromToRequest, string untilToRequest)
         {
             IList<Rate> dataToChart = await ApiRequestor.GetCurrencyFromTo(cash, fromToRequest, untilToRequest);
-            foreach(Rate rate in dataToChart)
-            {
-                Debug.WriteLine("Returned: " + rate);
-            }
             ((LineSeries)LineChart.Series[0]).ItemsSource  = dataToChart;
         }
 
