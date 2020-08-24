@@ -39,6 +39,7 @@ namespace ExchangeRates
             this.ViewModel = new CashViewModel(this);
             this.Date = DateTime.Now;
             Initialize();
+            Application.Current.Resuming += new EventHandler<Object>(App_Resuming);
         }
 
         public async void InitializeTable(string tableName, string date = "")
@@ -107,6 +108,12 @@ namespace ExchangeRates
         private void CloseApplication(object sender, RoutedEventArgs e)
         {
             Application.Current.Exit();
+        }
+
+        private void App_Resuming(Object sender, Object e)
+        {
+            // TODO: implement
+            Debug.WriteLine("Application is resuming!!!");
         }
     }
 }

@@ -30,6 +30,7 @@ namespace ExchangeRates
         public DateTimeOffset DateFrom { get; set; }
         public DateTimeOffset DateUntil { get; set; }
         private Cash cash;
+        private IList<Rate> dataToChart;
 
         public DetailsView()
         {
@@ -73,8 +74,9 @@ namespace ExchangeRates
 
         private async Task ChangeChart(string fromToRequest, string untilToRequest)
         {
-            IList<Rate> dataToChart = await ApiRequestor.GetCurrencyFromTo(cash, fromToRequest, untilToRequest);
-            ((LineSeries)LineChart.Series[0]).ItemsSource  = dataToChart;
+            dataToChart = await ApiRequestor.GetCurrencyFromTo(cash, fromToRequest, untilToRequest);
+            LineSeries series = ((LineSeries)LineChart.Series[0]);
+            series.ItemsSource  = dataToChart;
             ExportButton.IsEnabled = true;
         }
 
@@ -95,33 +97,51 @@ namespace ExchangeRates
             return true;
         }
 
-        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        private async void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Write("Not implemented! Cannot find easy method to export in jpeg file");
-            /*
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            savePicker.FileTypeChoices.Add("comma-separated values", new List<string>() { ".csv" });
+            savePicker.SuggestedFileName = "new";
+            Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
-                IList<Rate> dataToChart = (IList<Rate>)((LineSeries)LineChart.Series[0]).ItemsSource;
-                
-                IList<string> dataToFile = new List<string>();
-                foreach (Rate rate in dataToChart)
+                // Prevent updates to the remote version of the file until
+                // we finish making changes and call CompleteUpdatesAsync.
+                Windows.Storage.CachedFileManager.DeferUpdates(file);
+                // write to file
+                string content = CreateCSVData();
+                await Windows.Storage.FileIO.WriteTextAsync(file, content);
+                // Let Windows know that we're finished changing the file so
+                // the other app can update the remote version of the file.
+                // Completing updates may require Windows to ask for user input.
+                Windows.Storage.Provider.FileUpdateStatus status =
+                    await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
                 {
-                    dataToFile.Add(rate.ToString());
+                    Debug.Write("File " + file.Name + " was saved.");
                 }
-
-                Debug.WriteLine(file.Path);
-                File.WriteAllLines(file.Path, dataToFile.ToArray());
+                else
+                {
+                    Debug.Write("File " + file.Name + " couldn't be saved.");
+                }
             }
             else
             {
-                Debug.WriteLine("Operation canceled");
+                Debug.Write("Operation cancelled");
             }
-            */
+        }
+
+        private string CreateCSVData()
+        {
+            string csv = Currency;
+            foreach (Rate rate in dataToChart)
+            {
+                csv += "\r\n";
+                string line = string.Format("{0};{1}", rate.Mid, rate.Date);
+                csv += line;
+            }
+            return csv;
         }
     }
 }

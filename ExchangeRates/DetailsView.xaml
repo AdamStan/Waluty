@@ -24,6 +24,15 @@
             <AppBarButton Icon="Cancel" Label="Close" Click="AppBarButton_Click"/>
         </CommandBar>
         <Charting:Chart x:Name="LineChart" Grid.Row="1" Grid.Column="2" Margin="120,120,120,120">
+            <!-- disabling x labels <Charting:Chart.Axes>
+                <Charting:CategoryAxis Orientation="X">
+                    <Charting:CategoryAxis.AxisLabelStyle>
+                        <Style x:Name="labelStyleX1" TargetType="Control">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </Style>
+                    </Charting:CategoryAxis.AxisLabelStyle>
+                </Charting:CategoryAxis>
+            </Charting:Chart.Axes> -->
             <Charting:LineSeries Title="{x:Bind cash.Code}" IndependentValuePath="Date" DependentValuePath="Mid" IsSelectionEnabled="True">
                 <Charting:LineSeries.LegendItemStyle>
                     <Style TargetType="Control">
@@ -33,7 +42,7 @@
                 </Charting:LineSeries.LegendItemStyle>
             </Charting:LineSeries>
         </Charting:Chart>
-        <Button Name="ExportButton" Content="Export to JPEG" IsEnabled="False" HorizontalAlignment="Right" 
+        <Button Name="ExportButton" Content="Export to CSV" IsEnabled="False" HorizontalAlignment="Right" 
                 Margin="0,75,50,0" VerticalAlignment="Top" Click="ExportButton_Click"/>
     </Grid>
 </Page>
