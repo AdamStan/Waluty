@@ -13,7 +13,8 @@
         <DatePicker Date="{x:Bind Date}" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" DateChanged="DatePicker_DateChanged"/>
         <ListView x:Name="CurrenciesListView" ItemsSource="{x:Bind ViewModel.ManyCash}" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                   ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                  ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
+                  ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="ListView_ItemClick"
+                  >
             <ListView.ItemsPanel >
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid/>
@@ -28,9 +29,9 @@
                             </Image.Source>
                         </Image>
                         <StackPanel>
-                            <TextBlock Text="{x:Bind Currency}"/>
-                            <TextBlock Text="{x:Bind Code}"/>
-                            <TextBlock Text="{x:Bind MidWithDescription}"/>
+                            <TextBlock Text="{Binding Currency}"/>
+                            <TextBlock Text="{Binding Code}"/>
+                            <TextBlock Text="{Binding MidWithDescription}"/>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>
@@ -48,5 +49,6 @@
             </CommandBar.Content>
             <AppBarButton Icon="Cancel" Label="Close" Click="CloseApplication"/>
         </CommandBar>
+        <Button Content="Refresh Ignore Cache" HorizontalAlignment="Right" Margin="0,45,10,0" VerticalAlignment="Top" Height="32" Width="160" Click="Refresh_Ignore_Cache"/>
     </Grid>
 </Page>

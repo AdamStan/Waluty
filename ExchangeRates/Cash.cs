@@ -15,6 +15,7 @@ namespace ExchangeRates
      */
     public class Cash : INotifyPropertyChanged
     {
+        public static readonly char DATE_SEPARATOR = '/';
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         /** Name */
         public string Currency { get; set; }
@@ -42,7 +43,7 @@ namespace ExchangeRates
         {
             get
             {
-                return $"{EffectiveDate.Day}/{EffectiveDate.Month}/{EffectiveDate.Year}";
+                return $"{EffectiveDate.Day}" + DATE_SEPARATOR + $"{EffectiveDate.Month}" + DATE_SEPARATOR + $"{EffectiveDate.Year}";
             }
         }
 
@@ -68,6 +69,7 @@ namespace ExchangeRates
         {
             // Raise the PropertyChanged event, passing the name of the property whose value has changed.
             this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            MainPage.UpdateStorage(this);
         }
     }
 

@@ -43,10 +43,10 @@ namespace ExchangeRates
         /// <param name="table"> name of table to request (from api) </param>
         /// <param name="date"> if null then we take current exchange rates </param> 
         /// <returns></returns>
-        public static async Task<IList<Cash>> GetAllCashAsync(string table, string date = "")
+        public static async Task<List<Cash>> GetAllCashAsync(string table, string date = "")
         {
             List<Cash> currencies = new List<Cash>();
-            
+
             string content = await GetJsonAsync(BaseUrl + table + "/" + date + "/");
             if (content.Equals("404 NotFound - Not Found - Brak danych"))
             {
@@ -54,21 +54,29 @@ namespace ExchangeRates
                 return currencies;
             }
 
+            currencies.ForEach(cur => {
+                cur.TableName = table;
+            });
+
             currencies.AddRange(JsonParserForCurrencies.GetCashFromJson(content));
 
+            return currencies;
+        }
+
+        public static void GetFlagsForCurrencies(List<Cash> currencies)
+        {
             currencies.ForEach(async cur => {
                 try
                 {
                     string pathToImage = await GetFlag(cur);
-                    cur.TableName = table;
                     cur.PathToImage = pathToImage;
-                } catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Message);
                 }
             });
 
-            return currencies;
         }
 
         internal static async Task<IList<Rate>> GetCurrencyFromTo(Cash cash, string fromToRequest, string untilToRequest)

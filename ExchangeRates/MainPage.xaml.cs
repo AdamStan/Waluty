@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using System.Diagnostics;
 
 //Szablon elementu Pusta strona jest udokumentowany na stronie https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x415
 
@@ -24,6 +15,7 @@ namespace ExchangeRates
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private static readonly StorageManager storageManager = new StorageManager();
         public string NoExchangeRateMessage
         {
             get
@@ -46,7 +38,8 @@ namespace ExchangeRates
         {
             try
             {
-                IList<Cash> currencies = await ApiRequestor.GetAllCashAsync(tableName, date);
+                List<Cash> currencies = await ApiRequestor.GetAllCashAsync(tableName, date);
+                ApiRequestor.GetFlagsForCurrencies(currencies);
                 this.ViewModel.AddCurrencies(currencies);
             }
             catch (Exception)
@@ -57,8 +50,16 @@ namespace ExchangeRates
 
         internal void Initialize(string date = "")
         {
-            InitializeTable("A", date);
-            InitializeTable("B", date);
+            ObservableCollection<Cash> currencies = storageManager.GetRatesFromStorage();
+            if (!date.Equals("") || currencies.Count == 0)
+            {
+                InitializeTable("A", date);
+                InitializeTable("B", date);
+            }
+            else 
+            {
+                this.ViewModel.AddCurrencies(currencies);
+            }
         }
 
         public CashViewModel ViewModel { get; set; }
@@ -87,11 +88,12 @@ namespace ExchangeRates
             ViewModel.RemoveAllCurrencies();
             Initialize(dateToGet);
             Debug.WriteLine(dateToGet);
-            ListViewUpdated();
         }
 
         public void ListViewUpdated()
         {
+            // binding sometimes doesn't work
+            CurrenciesListView.ItemsSource = ViewModel.ManyCash;
             Debug.WriteLine(CurrenciesListView.Items.Count);
             if (CurrenciesListView.Items.Count == 0)
             {
@@ -102,6 +104,7 @@ namespace ExchangeRates
             {
                 NoItemsTextBox.Visibility = Visibility.Collapsed;
                 CurrenciesListView.Visibility = Visibility.Visible;
+                UpdateStorage();
             }
         }
 
@@ -114,6 +117,25 @@ namespace ExchangeRates
         {
             // TODO: implement
             Debug.WriteLine("Application is resuming!!!");
+        }
+
+        public void UpdateStorage()
+        {
+            Debug.WriteLine("Update storage");
+            storageManager.SetRatesToStorage(this.ViewModel);
+        }
+
+        public static void UpdateStorage(Cash cash)
+        {
+            Debug.WriteLine("Update storage - cash");
+            storageManager.SetRatesToStorage(cash);
+        }
+
+        private void Refresh_Ignore_Cache(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("clicked");
+            storageManager.ClearLocalStorage();
+            Initialize();
         }
     }
 }
