@@ -41,7 +41,6 @@ namespace ExchangeRates
             DateTime dateWhenLastSaveWasDone = GetDateWhenLastStorageWasSaved();
             if (oldCurrencies != null && dateWhenLastSaveWasDone.CompareTo(DateTime.Now.Date) == 0)
             {
-                Debug.WriteLine("I've returned !!!");
                 foreach (KeyValuePair<string, object> entry in oldCurrencies)
                 {
                     string code = entry.Key;
@@ -53,6 +52,7 @@ namespace ExchangeRates
                     cash.Mid = Convert.ToDouble(values[1], DOUBLE_FORMAT);
                     string[] dateValues = values[2].Split(Cash.DATE_SEPARATOR);
                     cash.EffectiveDate = new DateTime(Convert.ToInt32(dateValues[2]), Convert.ToInt32(dateValues[1]), Convert.ToInt32(dateValues[0]));
+                    cash.TableName = values[3];
                     cash.PathToImage = values[4];
                     currencies.Add(cash);
                 }

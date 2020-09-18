@@ -39,7 +39,7 @@ namespace ExchangeRates
             try
             {
                 List<Cash> currencies = await ApiRequestor.GetAllCashAsync(tableName, date);
-                ApiRequestor.GetFlagsForCurrencies(currencies);
+                ApiRequestor.GetFlagsForCurrencies(tableName, currencies);
                 this.ViewModel.AddCurrencies(currencies);
             }
             catch (Exception)

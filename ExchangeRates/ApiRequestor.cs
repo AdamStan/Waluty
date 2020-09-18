@@ -54,7 +54,8 @@ namespace ExchangeRates
                 return currencies;
             }
 
-            currencies.ForEach(cur => {
+            currencies.ForEach(cur =>
+            {
                 cur.TableName = table;
             });
 
@@ -63,12 +64,14 @@ namespace ExchangeRates
             return currencies;
         }
 
-        public static void GetFlagsForCurrencies(List<Cash> currencies)
+        public static void GetFlagsForCurrencies(string tableName, List<Cash> currencies)
         {
-            currencies.ForEach(async cur => {
+            currencies.ForEach(async cur =>
+            {
                 try
                 {
                     string pathToImage = await GetFlag(cur);
+                    cur.TableName = tableName;
                     cur.PathToImage = pathToImage;
                 }
                 catch (Exception ex)
@@ -100,6 +103,8 @@ namespace ExchangeRates
 
     class JsonParserForCurrencies
     {
+        private static bool succses;
+
         public static IList<Cash> GetCashFromJson(string json)
         {
             IList<Cash> currencies = new List<Cash>();
@@ -111,7 +116,8 @@ namespace ExchangeRates
                 foreach (var currency in jsonObject.GetNamedArray("rates"))
                 {
                     var currencyObject = currency.GetObject();
-                    currencies.Add(new Cash() {
+                    currencies.Add(new Cash()
+                    {
                         Currency = currencyObject.GetNamedString("currency"),
                         Code = currencyObject.GetNamedString("code"),
                         Mid = currencyObject.GetNamedNumber("mid"),
@@ -121,7 +127,7 @@ namespace ExchangeRates
             }
             return currencies;
         }
-        
+
         public static string GetAlpha2CodeUrlFromJson(string json)
         {
             string imageUrl = "";
@@ -140,15 +146,19 @@ namespace ExchangeRates
         public static IList<Rate> GetPriceFromJson(string json)
         {
             IList<Rate> rates = new List<Rate>();
-            var jsonObject = JsonObject.Parse(json);
-            var jsonArray = jsonObject.GetNamedArray("rates");
-            foreach (var jsonRate in jsonArray)
+
+            bool succses = JsonObject.TryParse(json, out var jsonObject);
+            if (succses)
             {
-                var rate = jsonRate.GetObject();
-                string effectiveDate = rate.GetNamedString("effectiveDate");
-                double mid = rate.GetNamedNumber("mid");
-                Rate newRate = new Rate(effectiveDate, mid);
-                rates.Add(newRate);
+                var jsonArray = jsonObject.GetNamedArray("rates");
+                foreach (var jsonRate in jsonArray)
+                {
+                    var rate = jsonRate.GetObject();
+                    string effectiveDate = rate.GetNamedString("effectiveDate");
+                    double mid = rate.GetNamedNumber("mid");
+                    Rate newRate = new Rate(effectiveDate, mid);
+                    rates.Add(newRate);
+                }
             }
             return rates;
         }

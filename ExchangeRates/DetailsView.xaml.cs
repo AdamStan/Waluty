@@ -67,8 +67,15 @@ namespace ExchangeRates
         {
             dataToChart = await ApiRequestor.GetCurrencyFromTo(cash, fromToRequest, untilToRequest);
             LineSeries series = ((LineSeries)LineChart.Series[0]);
-            series.ItemsSource  = dataToChart;
-            ExportButton.IsEnabled = true;
+            if (dataToChart.Count > 0)
+            {
+                series.ItemsSource  = dataToChart;
+                ExportButton.IsEnabled = true;
+            }
+            else
+            {
+                Debug.WriteLine("No data can be find, check url string!");
+            }
         }
 
         private bool DatesAreCorrect()
@@ -125,7 +132,7 @@ namespace ExchangeRates
 
         private string CreateCSVData()
         {
-            string csv = Currency;
+            string csv = "Mid;Date";
             foreach (Rate rate in dataToChart)
             {
                 csv += "\r\n";
